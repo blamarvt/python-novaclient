@@ -154,6 +154,51 @@ def do_boot(cs, args):
      help="Key the server with an SSH keypair. "\
           "Looks in ~/.ssh for a key, "\
           "or takes an explicit <path> to one.")
+@utils.arg('account', metavar='<account>', help='Account to build this'\
+     ' server for')
+@utils.arg('name', metavar='<name>', help='Name for the new server')
+def do_boot_for_account(cs, args):
+    """Boot a new server in an account."""
+    name, image, flavor, metadata, files, reservation_id, \
+            min_count, max_count = _boot(cs, args)
+
+    server = cs.accounts.create_instance_for(args.account, args.name,
+                image, flavor,
+                meta=metadata,
+                files=files)
+    utils.print_dict(server._info)
+
+
+@utils.arg('--flavor',
+     default=None,
+     metavar='<flavor>',
+     help="Flavor ID (see 'nova flavors'). "\
+          "Defaults to 256MB RAM instance.")
+@utils.arg('--image',
+     default=None,
+     metavar='<image>',
+     help="Image ID (see 'nova images'). "\
+          "Defaults to Ubuntu 10.04 LTS.")
+@utils.arg('--meta',
+     metavar="<key=value>",
+     action='append',
+     default=[],
+     help="Record arbitrary key/value metadata. "\
+          "May be give multiple times.")
+@utils.arg('--file',
+     metavar="<dst-path=src-path>",
+     action='append',
+     dest='files',
+     default=[],
+     help="Store arbitrary files from <src-path> locally to <dst-path> "\
+          "on the new server. You may store up to 5 files.")
+@utils.arg('--key',
+     metavar='<path>',
+     nargs='?',
+     const=AUTO_KEY,
+     help="Key the server with an SSH keypair. "\
+          "Looks in ~/.ssh for a key, "\
+          "or takes an explicit <path> to one.")
 @utils.arg('--reservation_id',
      default=None,
      metavar='<reservation_id>',
