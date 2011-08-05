@@ -370,4 +370,18 @@ class FakeHTTPClient(base_client.HTTPClient):
     def delete_zones_1(self, **kw):
         return (202, None)
 
+    #
+    # Accounts
+    #
+    def post_accounts_test_account_create_instance(self, body, **kw):
+        assert body.keys() == ['server']
+        fakes.assert_has_keys(body['server'],
+                        required=['name', 'imageRef', 'flavorRef'],
+                        optional=['metadata',
+                                'personality', 'min_count', 'max_count'])
+        if 'personality' in body['server']:
+            for pfile in body['server']['personality']:
+                fakes.assert_has_keys(pfile, required=['path', 'contents'])
+        return (202, self.get_servers_1234()[1])
+
 

@@ -1,6 +1,7 @@
 
 
 from novaclient import client
+from novaclient.v1_1 import accounts
 from novaclient.v1_1 import flavors
 from novaclient.v1_1 import images
 from novaclient.v1_1 import servers
@@ -26,6 +27,7 @@ class Client(object):
     """
 
     def __init__(self, username, api_key, project_id, auth_url, timeout=None):
+        self.accounts = accounts.AccountManager(self)
         self.flavors = flavors.FlavorManager(self)
         self.images = images.ImageManager(self)
         self.servers = servers.ServerManager(self)
